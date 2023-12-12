@@ -1,32 +1,29 @@
 package com.boromirfinancing.login;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequestMapping("/api")
 public class APIEndpoint {
     
-    @GetMapping("/process-parameters")
-    public ResponseEntity<String> processParameters (
+    @PostMapping("/process")
+    public ResponseEntity<?> processParameters(@RequestBody ParametersDTO params) {
 
-        @RequestParam(name="username", required = true) String usernameString,
-        @RequestParam(name="password", required = true) String passwordString
-    ) {
-        boolean isSuccess = verifyCreds(usernameString, passwordString);
-        
-        if (isSuccess){
-            return new ResponseEntity<>("Success",HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>("Failure",HttpStatus.BAD_REQUEST);
+        boolean result = verifyCreds(params.getParam1(), params.getParam2());
+        if (result){
+            return ResponseEntity.ok(result);
+        }else{
+            return ResponseEntity.badRequest().body(result);
         }
 
     }
     private boolean verifyCreds(String param1, String param2){
-        if (param1.length()>= 2 || param2.length() >=2 ){
+        if (param1.length()>= 2 | param2.length() >=2 ){
             return true;
         } else {
             return false;
